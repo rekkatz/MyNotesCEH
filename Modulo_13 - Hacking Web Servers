@@ -1,0 +1,44 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 13 - Hacking Web Servers
+------------------------------------------------
+
+
+1 - Footprint the web server
+	1.1 - Information gathering using Ghost Eye
+	1.2 - Perform web server reconnaissance using Skipfish
+
+		>#  skipfish -o / root / test -S /usr/share/skipfish/dictionaries/complete.wl http://X.X.X.X:8080
+
+	1.3 - Footprint a web server using the httprecon Tool
+	1.4 - Footprint a web server using ID Serve
+	1.5 - Footprint a web server using Netcat and Telnet
+
+		# NETCAT
+			>#  nc -vv www.moviescope.com 80
+
+		# TELNET
+			># telnet www.moviescope.com 80
+
+	1.6 - Enumerate web server information using Nmap Scripting Engine (NSE)
+
+		># nmap -sV --script http-enum -Pn -n X.X.X.X
+			# Enumera los directorios que utilizan los servidores web y las aplicaciones web.
+
+		># nmap --script hostmap-bfk -script-args hostmap-bfk.prefix=hostmap- -Pn -n X.X.X.X
+			# Descubre los nombres de host que resuelven el dominio objetivo.
+
+		># nmap --script http-trace -d domain.com
+			# Realiza un seguimiento HTTP en el dominio de destino. Este script detectará un servidor vulnerable que usa el método TRACE enviando una solicitud HTTP TRACE que muestra si el método está habilitado o no
+
+		># nmap -p80 --script http-waf-detect X.X.X.X
+			# Verificar si el firewall de aplicaciones está configurado en el dominio o host de destino. Este script escaneará el host e intentará determinar si un servidor web está siendo monitorizado por un IPS, IDS o WAF.
+
+	1.7 - Uniscan web server fingerprinting in Parrot Security
+
+		># uniscan -h
+
+2 - Perform a web server attack
+	2.1 - Crack FTP credentials using a Dictionary Attack
+
+		># hydra -L /home/attacker/Desktop/Wordlists/Usernames.txt -P /home/attacker/Desktop/Wordlists/Passwords.txt ftp://X.X.X.X

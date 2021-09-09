@@ -1,0 +1,56 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 14 - Hacking Web Applications
+------------------------------------------------
+
+1 - Footprint the web infrastructure
+
+	1.1 - Perform web application reconnaissance
+	1.2 - Perform web application reconnaissance using WhatWeb
+	1.3 - Perform web spidering using OWASP ZAP
+	1.4 - Detect load balancers using various tools
+
+		# Con DIG podemos detectar balanceadores de carga si el dominio tiene diferentes registros A (Balanceador DNS)
+		# Con la herramienta LBD también podemos detectar balanceadores de forma automatizada, nos indicará si se trata de balanceadores DNS o HTTP.
+			># lbd yahoo.com
+
+	1.5 - Identify web server directories
+	1.6 - Perform web application vulnerability scanning using Vega
+	1.7 - Identify clickjacking vulnerability using iframe
+
+2 - Perform web application attacks
+
+	2.1 - Perform a brute-force attack using Burp Suite
+	2.2 - Perform parameter tampering using Burp Suite
+	2.3 - Exploit parameter tampering and XSS vulnerabilities in web applications
+	2.4 - Perform cross-site request forgery (CSRF) attack
+	2.5 - Enumerate and hack a web application using WPScan and Metasploit
+	2.6 - Exploit a remote command execution vulnerability to compromise a target web server
+	2.7 - Exploit a file upload vulnerability at different security levels
+	2.8 - Gain backdoor access via a web shell using Weevely
+
+
+3 - JWT Token
+
+	Token web de JWT
+	
+		- Obtener el JWT 
+	
+		"Nota: Si el encabezado del Token es similar a esto eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0 es vulnerable al None alg."
+	
+		- Convertirlo en HS256 en la pagina https://www.jsonwebtoken.io/ o https://jwt.io/
+	
+		- Convertir a Hex el public.pem de la siguiente manera para que openssl pueda utilizarlo: 
+		cat public.pem | xxd -p | tr -d "\\ n"
+		
+		- El proximo paso es utilizar openssl para firmar como valido el HS256 key
+		echo -n "token JWT" | openssl dgst -sha256 -mac HMAC -macopt hexkey: (aca va el resultado del comando anterior)
+		
+		Esto nos devolvera un formato similar a esto: (stdin) = valor en hex.
+	
+		El paso final es convertir ese hex a binario y codificar a base64. Esto lo hacemos con un script en python.
+		python -c "exec (\" import base64, binascii \ nprint base64.urlsafe_b64encode (binascii.a2b_hex ('stdin valor')). replace ('=', '') \ ")"
+	
+		El resultado es nuestro nuevo secreto.
+	
+		Ahora podemos utilizar nuestro nuevo JWT Ej: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9. <payload>. <New secret>

