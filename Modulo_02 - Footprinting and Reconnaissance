@@ -1,0 +1,236 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 2 - Footprinting and Reconnaissance
+------------------------------------------
+
+## Google Hacking ##
+
+- cache: This operator allows you to view cached version of the web page. [cache:www.google.com]- Query returns the cached version of the website www.google.com
+
+- allinurl: This operator restricts results to pages containing all the query terms specified in the URL. [allinurl: google career]—Query returns only pages containing the words “google” and “career” in the URL
+
+- inurl: This operator restricts the results to pages containing the word specified in the URL [inurl: copy site:www.google.com]—Query returns only pages in Google site in which the URL has the word “copy”
+
+- allintitle: This operator restricts results to pages containing all the query terms specified in the title. [allintitle: detect malware]—Query returns only pages containing the words “detect” and “malware” in the title
+
+- inanchor: This operator restricts results to pages containing the query terms specified in the anchor text on links to the page. [Anti-virus inanchor:Norton]—Query returns only pages with anchor text on links to the pages containing the word “Norton” and the page containing the word “Anti-virus”
+
+- allinanchor: This operator restricts results to pages containing all query terms specified in the anchor text on links to the page. [allinanchor: best cloud service provider]—Query returns only pages in which the anchor text on links to the pages contain the words “best,” “cloud,” “service,” and “provider”
+
+- link: This operator searches websites or pages that contain links to the specified website or page. [link:www.googleguide.com]—Finds pages that point to Google Guide’s home page
+
+- related: This operator displays websites that are similar or related to the URL specified. [related:www.certifiedhacker.com]—Query provides the Google search engine results page with websites similar to certifiedhacker.com
+
+- info: This operator finds information for the specified web page. [info:gothotel.com]—Query provides information about the national hotel directory GotHotel.com home page
+
+- location: This operator finds information for a specific location. [location: 4 seasons restaurant]—Query give you results based around the term 4 seasons restaurant
+
+
+
+## Video Hacking ##
+
+Podemos obtener información acerca de videos subidos en plataformas para tal caso:
+
+- Copiar cualquier dirección de video de youtube
+- Introducir en https://citizenevidence.amnestyusa.org y GO
+- Nos muestra información del video (ID, Upload Date, Upload Time)
+- Podemos realizar búsqueda inversa por imágenes del video
+
+
+## FTP Hacking ##
+
+Podemos obtener información de archivos subidos en servidores FTP:
+
+- https://www.searchftps.net/ 
+- https://globalfilesearch.com
+- http://www.freewareweb.com
+
+
+
+## IoT Hacking ##
+
+Podemos recopilar información de los motores de búsqueda de IoT:
+
+- https://www.shodan.io
+- https://censys.io
+- https://thingful.net
+
+
+
+## Footprinting a través de servicios Web ##
+
+Podemos obtener información de dominios y subdominios:
+
+- https://www.netcraft.com
+- Sublist3r (Github)
+- https://pentest-tools.com
+
+
+
+## Información de personal con PeekYou ##
+
+ - https://www.peekyou.com
+ - https://pipl.com
+ - https://www.intelius.com
+ - https://www.beenverified.com
+
+
+
+## Lista de correo electrónico usando el recolector ##
+
+- theHarvester
+		Sintaxis:  theHarvester -d microsoft.com -l 200 -b baidu
+
+
+
+## Web Profunda ##
+
+- The Hidden Wiki es un sitio de cebolla que funciona como un servicio de Wikipedia de sitios web ocultos. (http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page)
+- FakeID es un sitio de cebolla para crear pasaportes falsos (http://fakeidskhfik46ux.onion/)
+- Paypal Cent es un sitio de cebolla que vende cuentas de PayPal con buenos saldos (http://nare7pqnmnojs2pg.onion/)
+
+- También puede utilizar herramientas como ExoneraTor (https://metrics.torproject.org), motor de búsqueda OnionLand (https://onionlandsearchengine.com), etc. para realizar una navegación web profunda y oscura.
+
+
+
+##  Determinar el sistema operativo de destino mediante la implantación pasiva ##
+
+- https://www.shodan.io
+- https://censys.io
+- https://www.netcraft.com
+
+
+## Recopilar información sobre un sitio web de destino mediante la utilidad de línea de comandos Ping ##
+
+- Tamaño máximo de frame size que permite viajar en la red:
+	- ping www.certifiedhacker.com -f -l 1472
+
+- Tiempo de vida TTL en 3 y se muestran diferentes enrutadores según respuesta:
+	- ping www.certifiedhacker.com -i 3
+
+- Tiempo de vida TTL en 2 y solo 1 solicitud (Podemos ir subiendo el TTL para comprobar nodos intermediarios como con Tracert):
+	- ping www.certifiedhacker.com -i 2 -n 1
+
+
+
+## Extraiga los datos de una empresa utilizando Web Data Extractor ##
+
+	- Introducir URL
+		- Check:
+			- Stay within full URL
+			- Extact Meta Tags
+			- Extract site body
+			- Extract URL as "base URL"
+			- Extract emails
+			- Extract phones
+			- Extract faxes
+
+## Duplicar un sitio web de destino utilizando HTTrack Web Site Copier ##
+
+## Reúna una lista de palabras del sitio web de destino usando CeWL ##
+
+- Cewl
+	- Sintaxis: cewl -w wordlist.txt -d 2 -m 5 www.certifiedhacker.com
+	- -d representa la profundidad de la araña del sitio web. 
+	- -m representa la longitud mínima de palabra.
+	- -w representa el archivo para guardar output.
+
+
+## Realización de huellas de Whois ##
+
+- https://whois.domaintools.com
+
+## Recopilar información de DNS mediante la utilidad de línea de comandos nslookup y la herramienta en línea ##
+
+- nslookup
+	- set type=cname (La búsqueda de CNAME se realiza directamente contra el servidor de nombres autorizado del dominio y enumera los registros CNAME de un dominio.)
+	- certifiedhacker.com
+		(Repuesta de DNS Autorizado)
+
+NOTAS: El servidor de nombres autorizado almacena los registros asociados con el dominio. Por lo tanto, si un atacante puede determinar el servidor de nombres autorizado (servidor de nombres primario) y obtener su dirección IP asociada, podría intentar explotar el servidor para realizar ataques como DoS, DDoS, redirección de URL, etc.
+
+
+
+## Realice una búsqueda de DNS inversa mediante la verificación de dominio de IP inversa y DNSRecon ##
+
+- Dnsrecon
+	- Sintaxis:  
+		- dnsrecon -r 162.241.216.0-162.241.216.255
+		- Ubicar un registro DNS PTR para direcciones IP entre 162.241.216.0 - 162.241.216.255.
+		- La opción -r especifica el rango de direcciones IP (primero-último) para la búsqueda inversa por fuerza bruta.
+
+
+## Realización de implantación de redes - Rangos de redes ##
+
+- https://search.arin.net/
+- Windows --> tracert www.certifiedhacker.com
+- Windows --> tracert -h 5 www.certifiedhacker.com
+- Linux   --> traceroute www.certifiedhacker.com
+
+
+## Realización de Footprinting utilizando varias herramientas de Footprinting ##
+
+- recon-ng
+
+	- marketplace install all (instala todos los módulos disponibles para recon-ng)
+	- modules search (Muestra todos los módulos)
+	- workspaces CEH create (Crea un espacio de trabajo)
+	- workspaces list (Muestra los espacios de trabajo)
+	- db insert domains (Añade un dominio)
+		- certifiedhacker.com
+	- show domains (Muestra los dominios)
+	- modules load brute (todos los modulos de fuerza bruta)
+	- modules load recon/domains-hosts/brute_hosts (Carga un módulo)
+	- run (Ejecuta el módulo)
+	- show hosts
+	- modules load reverse_resolve
+	- modules load recon/hosts-hosts/reverse_resolve
+	- modules load reporting
+	- modules load reporting/html
+	- info (muestra las opciones como metasploit)
+
+
+	# Optiene cuentas de correo de facebook.com
+	- workspaces create reconocimiento
+	- modules load recon/domains-contacts/whois_pocs
+	- info
+	- options set SOURCE facebook.com
+	- run
+	- back
+
+	# Comprueba si el usuario existe
+	- modules load recon/profiles-profiles/namechk
+	- options set SOURCE BrandonStout
+
+	# Devuelve la URL del perfil de usuario introducido
+	- modules load recon/profiles-profiles/profiler
+	- options set SOURCE BrandonStout
+
+	# Preparar reporte en HTML
+
+
+- Maltego
+	- Entity website
+	- Introducir nombre de dominio o subdominio
+	- Boton derecho all transform
+	- To Domains [DNS]
+	- To DNS Name [Using Name Schema di...] (Opcional)
+	- To DNS Name - SOA (Opcional)
+	- (etc...)
+
+- OSRFramework
+
+	- Usufy
+		- usufy.py -n Mark Zuckerberg -p twitter facebook youtube
+		- buscará los detalles del usuario en las plataformas mencionadas y le proporcionará la existencia del usuario
+
+	- Domainfy.py
+		- domainfy.py -n eccountil -t all
+
+	- searchfy.py : recopila información sobre los usuarios en las páginas de redes sociales.
+	- mailfy.py : recopila información sobre las cuentas de correo electrónico
+	- phonefy.py : comprueba la existencia de una serie determinada de teléfonos
+	- entify.py : extrae entidades mediante expresiones regulares de las URL proporcionadas
+
+- BillCipher
+

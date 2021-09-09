@@ -1,0 +1,109 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 8 - Sniffing
+------------------------------------------
+
+# El rastreo es sencillo en las redes basadas en concentradores, ya que el tráfico de un segmento pasa por todos los hosts asociados con ese segmento. Sin embargo, la mayoría de las redes actuales funcionan con conmutadores. Un conmutador es un dispositivo de red informática avanzado. La principal diferencia entre un concentrador y un conmutador es que un concentrador transmite datos de línea a cada puerto de la máquina y no tiene mapeo de líneas, mientras que un conmutador mira la dirección de control de acceso a medios (MAC) asociada con cada trama que pasa a través de él y envía los datos al puerto requerido. Una dirección MAC es una dirección de hardware que identifica de forma única a cada nodo de una red.
+
+# Los rastreadores de paquetes se utilizan para convertir la NIC del sistema host en modo promiscuo. La NIC en modo promiscuo puede capturar los paquetes dirigidos a la red específica. Hay dos tipos de olfateo. Cada uno se utiliza para diferentes tipos de redes. Los dos tipos son:
+
+	Detección pasiva : la detección pasiva implica no enviar paquetes. Solo captura y monitorea los paquetes que fluyen en la red.
+
+	Detección activa : la detección activa busca tráfico en una LAN conmutada inyectando tráfico activamente en la LAN; también se refiere a olfatear a través de un interruptor
+
+# El rastreo activo implica el envío de múltiples sondas de red para identificar los puntos de acceso. La siguiente es la lista de diferentes técnicas de olfateo activo:
+
+	Inundación de MAC : Implica inundar la tabla CAM con direcciones MAC falsas y pares de IP hasta que esté llena
+	
+	Envenenamiento por DNS : Implica engañar a un servidor DNS haciéndole creer que ha recibido información auténtica cuando, en realidad, no lo ha hecho.
+	
+	Envenenamiento ARP : Implica la construcción de una gran cantidad de solicitudes ARP falsificadas y paquetes de respuesta para sobrecargar un conmutador.
+	
+	Ataques de DHCP : Implica realizar un ataque de inanición de DHCP y un ataque de servidor DHCP deshonesto.
+	
+	Ataque de suplantación de identidad: implica la realización de suplantación de MAC, salto de VLAN y ataques STP para robar información confidencial
+
+
+1 - Perform active sniffing
+
+	1.1 - Perform MAC flooding using macof
+		
+		La inundación de MAC es una técnica que se utiliza para comprometer la seguridad de los conmutadores de red que conectan segmentos de red o dispositivos de red. Los atacantes utilizan la técnica de inundación de MAC para obligar a un conmutador a actuar como un concentrador, de modo que puedan olfatear fácilmente el tráfico.
+
+		macof es una herramienta para Unix y Linux que forma parte de la colección dsniff. Inunda la red local con direcciones MAC y direcciones IP aleatorias, lo que provoca que algunos conmutadores fallen y se abran en modo repetido, lo que facilita el rastreo. Esta herramienta inunda las tablas CAM del conmutador (131.000 por minuto) mediante el envío de entradas MAC falsificadas. Cuando la tabla MAC se llena, el conmutador se convierte en una operación similar a un concentrador donde un atacante puede monitorear los datos que se transmiten
+
+			># macof -i eth0 -n 10
+
+				-i : especifica la interfaz
+				-n : especifica el número de paquetes a enviar (aquí, 10 ).
+
+				# También puede apuntar a un solo sistema emitiendo el comando macof -i eth0 -d [Dirección IP de destino] ( -d : especifica la dirección IP de destino).
+
+	1.2 - Perform a DHCP starvation attack using Yersinia
+
+		En un ataque de inanición de DHCP, un atacante inunda el servidor DHCP enviando una gran cantidad de solicitudes DHCP y utiliza todas las direcciones IP disponibles que el servidor DHCP puede emitir. Como resultado, el servidor no puede emitir más direcciones IP, lo que lleva a un ataque de denegación de servicio (DoS). Debido a este problema, los usuarios válidos no pueden obtener o renovar sus direcciones IP y, por lo tanto, no pueden acceder a su red. Este ataque se puede realizar utilizando varias herramientas como Yersinia y Hyenae.
+
+		Yersinia es una herramienta de red diseñada para aprovechar las debilidades en diferentes protocolos de red como DHCP. Pretende ser un marco sólido para analizar y probar las redes y sistemas desplegados.
+
+			># yersinia -I
+				Press F2 mode DHCP
+				Press X for Attack Panel
+				Press 1 for Discover attack
+				Press q for exit ant stop attack
+
+	1.3 - Perform ARP poisoning using arpspoof
+
+		La suplantación de ARP es un método para atacar una LAN Ethernet. La suplantación de ARP tiene éxito al cambiar la dirección IP de la computadora del atacante a la dirección IP de la computadora de destino. Una solicitud ARP falsificada y un paquete de respuesta encuentran un lugar en la caché ARP de destino en este proceso. Como se ha falsificado la respuesta ARP, la computadora de destino (objetivo) envía los marcos a la computadora del atacante, donde el atacante puede modificarlos antes de enviarlos a la máquina de origen (Usuario A) en un ataque MITM.
+
+		arpspoof redirige los paquetes de un host de destino (o todos los hosts) en la LAN destinados a otro host en la LAN mediante la falsificación de respuestas ARP. Esta es una forma extremadamente eficaz de rastrear el tráfico en un conmutador.
+
+			># arpspoof -i eth0 -t 10.10.10.1 10.10.10.10 (Aquí, 10.10.10.10 es la dirección IP del sistema de destino [Windows 10] y 10.10.10.1 es la dirección IP del punto de acceso o puerta de enlace)
+
+				-i : especifica la interfaz de red
+				-t : especifica la dirección IP de destino
+				-r : especifica en ambos sentidos, es necesario establecer forwarding de UNIX en 1 (/proc/sys/net/ipv4/ip_forward)
+
+
+	1.4 - Perform an Man-in-the-Middle (MITM) attack using Cain & Abel
+
+		Un atacante puede obtener nombres de usuario y contraseñas mediante diversas técnicas o mediante la captura de paquetes de datos. Con solo capturar suficientes paquetes, los atacantes pueden extraer el nombre de usuario y la contraseña de un objetivo si la víctima se autentica en redes públicas, especialmente en sitios web no seguros. Una vez que se piratea una contraseña, un atacante puede usar la contraseña para interferir con las cuentas de la víctima, por ejemplo, al iniciar sesión en la cuenta de correo electrónico de la víctima, iniciar sesión en PayPal y vaciar la cuenta bancaria de la víctima, o incluso cambiar la contraseña.
+
+		Como medida preventiva, el administrador de una organización debe aconsejar a los empleados que no proporcionen información confidencial mientras se encuentren en redes públicas sin conexiones HTTPS. Se deben utilizar túneles VPN y SSH para asegurar la conexión de red. Un hacker ético experto y un probador de penetración (en adelante, pen tester) debe tener un conocimiento sólido de rastreo, protocolos de red y su topología, servicios TCP y UDP, tablas de enrutamiento, acceso remoto (SSH o VPN), mecanismos de autenticación y técnicas de encriptación.
+
+		Otro método eficaz para obtener nombres de usuario y contraseñas es utilizar Cain & Abel para realizar ataques MITM.
+
+		Un ataque MITM se utiliza para entrometerse en una conexión existente entre sistemas e interceptar los mensajes que se intercambian. Utilizando varias técnicas, los atacantes dividen la conexión TCP en dos conexiones: una conexión de cliente a atacante y una conexión de atacante a servidor. Después de la interceptación exitosa de la conexión TCP, el atacante puede leer, modificar e insertar datos fraudulentos en la comunicación interceptada.
+
+		Los ataques MITM son variados y se pueden llevar a cabo en una LAN conmutada. Los ataques MITM se pueden realizar utilizando varias herramientas como Cain & Abel.
+
+		Cain & Abel es una herramienta de recuperación de contraseñas que permite la recuperación de contraseñas olfateando la red y descifrando contraseñas cifradas. La función de envenenamiento de ARP de la herramienta Cain & Abel implica el envío de ARP falsificados gratuitos a las víctimas del host de la red. Este ARP falsificado puede facilitar el ataque a un intermediario.
+	
+
+	1.5 - Spoof a MAC address using TMAC and SMAC
+
+		Un ataque de duplicación o suplantación de MAC implica rastrear una red para las direcciones MAC de clientes legítimos conectados a la red. En este ataque, el atacante primero recupera las direcciones MAC de los clientes que están asociados activamente con el puerto del conmutador. Luego, el atacante falsifica su propia dirección MAC con la dirección MAC del cliente legítimo. Una vez que la suplantación tiene éxito, el atacante recibe todo el tráfico destinado al cliente. Por lo tanto, un atacante puede obtener acceso a la red y apoderarse de la identidad de un usuario de la red.
+
+		Si un administrador no tiene las habilidades adecuadas para detectar paquetes, es difícil defenderse de tales intrusiones. Por lo tanto, un pirata informático ético experto y un probador de lápiz debe saber cómo falsificar direcciones MAC, rastrear paquetes de red y realizar envenenamiento de ARP, suplantación de red y envenenamiento de DNS. Esta práctica de laboratorio demuestra cómo falsificar una dirección MAC para que un atacante no la conozca.
+
+2 - Perform network sniffing using various sniffing tools
+	2.1 - Perform password sniffing using Wireshark
+		
+		# Podemos habilitar el servicio Remote Packet Capture Protocol v.0 (Experimental) y configurar Wireshark para añadir una interfaz remota.
+		# De esta forma podemos capturar el tráfico de la víctima.
+
+	2.2 - Analyze a network using the Omnipeek Network Protocol Analyzer
+	2.3 - Analyze a network using the SteelCentral Packet Analyzer
+
+3 - Detect network sniffing
+	3.1 - Detect ARP poisoning in a switch-based network
+
+		# En Wireshark:
+			1 - Edit - Preferences - Protocols - ARP/RARP
+			2 - Activar "Detect ARP request storms"
+			2 - Activar "Detect duplicate IP address configuration"
+
+	3.2 - Detect ARP attacks using XArp
+	3.3 - Detect promiscuous mode using Nmap and NetScanTools Pro
+
+		# Detectar equipo con tarjeta en modo promiscuo con NMAP
+			># nmap --script sniffer-detect X.X.X.X

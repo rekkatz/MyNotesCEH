@@ -1,0 +1,409 @@
+CEH Practical Notes
+----------------------------
+Modulo 3 - Scanning Networks
+----------------------------
+
+## Descubrimiento de host con Nmap ##
+
+># nmap -sn -PR
+	- sn: deshabilita el escaneo de puertos
+	- PR: realiza escaneo de ping ARP
+	- PU: realiza escaneo de ping UDP
+	- PE: realiza el escaneo de ping ICMP ECHO
+	- Rango Zenmap: 10.10.11-20
+
+	Además de las técnicas de escaneo de red mencionadas anteriormente, también puede utilizar las siguientes técnicas de escaneo para realizar un descubrimiento de host en una red de destino.
+
+	Exploración de ping de máscara de dirección y marca de tiempo ICMP : estas técnicas son alternativas para la exploración de ping ICMP ECHO tradicional, que se utilizan para determinar si el host de destino está activo específicamente cuando los administradores bloquean los pings ICMP ECHO.
+
+	Escaneo de ping de marca de tiempo ICMP
+	># nmap -sn -PP [dirección IP de destino]
+
+	Escaneo de ping de máscara de dirección ICMP
+	># nmap -sn -PM [dirección IP de destino]
+
+	Escaneo de ping TCP SYN : esta técnica envía paquetes TCP SYN vacíos al host de destino, la respuesta ACK significa que el host está activo.
+	># nmap -sn -PS [dirección IP de destino]
+
+	Escaneo de ping TCP ACK : esta técnica envía paquetes TCP ACK vacíos al host de destino; una respuesta RST significa que el host está activo.
+	># nmap -sn -PA [dirección IP de destino]
+
+	Escaneo de ping del protocolo IP : esta técnica envía diferentes paquetes de sondeo de diferentes protocolos IP al host de destino, cualquier respuesta de cualquier sondeo indica que un host está activo.
+	># nmap -sn -PO [dirección IP de destino]
+
+
+## Descubrimiento de host con Angry IP Scanner ##
+
+- Preferencias:
+	- Scanning --> Pinging method = Combined UDP + TCP
+	- Display --> Alive hosts (responding to pings) only
+
+
+## Descubrimiento de puertos y servicios ##
+
+	## Descubrimiento de puertos y servicios con MegaPing ##
+		 
+		 Panel izquierdo:
+		 - IP Scanner
+		 - Port Scanner
+
+
+	## Descubrimiento de puertos y servicios con NetScanTools Pro ##
+
+		Panel Izquierdo:
+		- Ping Scanner (Use Default System DNS)
+		- Port Scanner (TCP Full Connect)
+
+
+## Técnicas de escaneo en red usando Nmap ##
+
+	## Escaneo TCP Connect ##
+
+		># nmap -sT -v X.X.X.X
+	
+		- sT: Realiza la conexión TCP / escaneo de apertura completa y 
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida).
+
+		NOTAS: El escaneo de conexión TCP completa un protocolo de enlace de tres vías con la máquina de destino. En el protocolo de enlace de tres vías de TCP, el cliente envía un paquete SYN, que el destinatario reconoce con el paquete SYN + ACK. A su vez, el cliente reconoce el paquete SYN + ACK con un paquete ACK para completar la conexión. Una vez que se completa el protocolo de enlace, el cliente envía un paquete RST para finalizar la conexión.
+
+	## Escaneo Stealth/TCP Half-Open
+
+		># nmap -sS -v X.X.X.X
+
+		- sS: Realiza el escaneo sigiloso/escaneo medio abierto de TCP
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida)
+
+		NOTAS: El escaneo sigiloso implica restablecer la conexión TCP entre el cliente y el servidor de forma abrupta antes de que se completen las señales de protocolo de enlace de tres vías y, por lo tanto, dejar la conexión medio abierta. Esta técnica de escaneo se puede utilizar para eludir las reglas del firewall, los mecanismos de registro y ocultarse bajo el tráfico de la red.
+
+	## Escaneo Xmas scan ##
+
+		># nmap -sX -v X.X.X.X
+
+		- sX: Realiza el escaneo de Xmas
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida).
+
+		NOTAS: El escaneo Xmas envía un frame TCP a un sistema de destino con indicadores FIN, URG y PUSH configurados. Si el objetivo ha abierto el puerto, no recibirá respuesta del sistema objetivo. Si el destino ha cerrado el puerto, recibirá una respuesta del sistema de destino con un RST.
+
+	## Escaneo TCP Maimon ##
+
+		># nmap -sM -v X.X.X.X
+
+		- sM: Realiza el escaneo TCP Maimon
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida).
+
+		NOTAS: En el escaneo de TCP Maimon, se envía una sonda FIN / ACK al objetivo; si no hay respuesta, entonces el puerto es Abierto|Filtrado, pero si el paquete RST se envía como respuesta, entonces el puerto está cerrado.
+
+	## Escaneo ACK ##
+
+		># nmap -sA -v X.X.X.X
+
+		- sA: Realiza la exploración de la sonda del indicardor ACK
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida).
+
+		NOTAS: La exploración de la sonda del indicador ACK envía un paquete de la sonda ACK con un número de secuencia aleatorio; ninguna respuesta implica que el puerto está filtrado (hay un firewall con estado presente) y una respuesta RST significa que el puerto no está filtrado.
+
+	## Escaneo UDP ##
+
+		># nmap -sU -v X.X.X.X
+
+		- sU: Realiza escaneo sobre protocolo UDP.
+		- v : Habilita la salida detallada (incluye todos los hosts y puertos en la salida).
+
+		NOTAS: El escaneo UDP usa el protocolo UDP en lugar del TCP. No hay protocolo de enlace de tres vías para el escaneo UDP. Envía paquetes UDP al host de destino; si no hay respuesta significa que el puerto está abierto. Si el puerto está cerrado, se recibe un mensaje de puerto ICMP inaccesible.
+
+	## Otras técnicas de escaneo ##
+
+		- sN: No realiza escaneo de puertos.
+		- T4: Plantilla de tiempo (1,2,3,4,5)
+		- A : Opción de escaneo agresivo. Admite detección de SO (-O), escaneo de versiones (-sV), escaneo de scripts (-sC) y traceroute (--traceroute). No debe usar -A contra redes de destino sin permiso.
+		- sV: Detecta versiones de servicio.
+
+		Escaneo de encabezado IDLE / IPID : un método de escaneo de puerto TCP que se puede usar para enviar una dirección de origen falsificada a una computadora para descubrir qué servicios están disponibles.
+		># nmap -sI -v [dirección IP de destino]
+
+		Escaneo SCTP INIT : se envía un fragmento INIT al host de destino; una respuesta INIT + ACK chunk implica que el puerto está abierto, y una respuesta ABORT Chunk significa que el puerto está cerrado.
+		># nmap -sY -v [dirección IP de destino]
+
+		SCTP COOKIE ECHO Scan : Se envía un fragmento de COOKIE ECHO al host de destino; ninguna respuesta implica que el puerto está abierto y la respuesta ABORT Chunk significa que el puerto está cerrado.
+		># nmap -sZ -v [dirección IP de destino]
+
+
+##  Técnicas de escaneo en red usando Hping3 ##
+
+	># hping3 -A X.X.X.X -p80 -c 5
+
+	- A: Especifica la configuración del indicador ACK.
+	- p: Especifica el puerto que se va a escanear:
+	- c: Especifica el recuenta de paquetes.
+
+	NOTAS: El escaneo ACK envía un paquete de sondeo ACK al host de destino; si no hay respuesta significa que el puerto está filtrado. Si regresa una respuesta RST, esto significa que el puerto está cerrado.
+
+
+	># hping3 -8 0-100 -S X.X.X.X -V
+
+	- 8: Especifica un modo de escaneo.
+	- 0-100: Especifica el rango de puertos que se van a escanear.
+	- V: Especifica el modo detallado.
+
+	NOTAS: El escaneo SYN se ocupa principalmente de tres de los indicadores: SYN, ACK y RST. Puede utilizar estos tres indicadores para recopilar información ilegal de los servidores durante el proceso de enumeración.
+
+
+	># hping3 -F -P -U X.X.X.X -p 80 -c 5
+
+	- F: Especifica la configuración de flag FIN.
+	- P: Especifica la configuración de flag PUSH.
+	- U: Especifica la configuración de flag URG.
+	- c: Especifica el recuento de paquetes.
+	- p: Especifica el puerto a escanear.
+
+	NOTAS: FIN, PUSH y URG escanean el puerto en la dirección IP de destino. Si hay un puerto abierto en el objetivo, recibirá una respuesta. Si el puerto está cerrado, Hping devolverá una respuesta RST.
+
+
+	># hping3 --scan 0-100 -S X.X.X.X
+
+	- scan: Especifica el rango de puertos a escanear (0-100).
+	- S: Especifica la configuración de flag SYN.
+
+	NOTAS: En el escaneo sigiloso de TCP, los paquetes TCP se envían al host de destino; si se recibe una respuesta SYN + ACK, indica que los puertos están abiertos.
+
+	## Otras técnicas para HPING3 ##
+
+	Escaneo ICMP: 
+	># hping3 -1 [Dirección IP de destino] -p 80 -c 5
+
+	Escaneo de subred completo para el host en vivo: 
+	># hping3 -1 [Subred de destino] --rand-dest -I eth0
+
+	Escaneo UDP: 
+	># hping3 -2 [Dirección IP de destino] -p 80 -c 5
+
+
+## Perform OS Discovery ##
+
+	Active Banner Grabbing: Se envían paquetes especialmente diseñados al sistema operativo remoto y se anotan las respuestas, que luego se comparan con una base de datos para determinar el sistema operativo. Las respuestas de diferentes sistemas operativos varían debido a las diferencias en la implementación de la pila de TCP / IP.
+
+	Passive Banner Grabbing: Esto depende de la implementación diferencial de la pila y de las diversas formas en que un sistema operativo responde a los paquetes. La captura pasiva de pancartas incluye la captura de banner de los mensajes de error, el rastreo del tráfico de la red y la captura de banner de las extensiones de página.
+
+	Identificación de SO según TTL
+	------------------------------
+
+	Sistema operativo (SO)					Tiempo para vivir		Tamaño de la ventana TCP
+	
+	Linux (Kernel 2.4 y 2.6)				64						5840
+	Google Linux							64						5720
+	FreeBSD									64						65535
+	OpenBSD									64						16384
+	Windows 95								32						8192
+	Windows 2000							128						16384
+	Windows XP								128						65535
+	Windows 98, Vista y 7 (Server 2008)		128						8192
+	iOS 12.4 (enrutadores Cisco)			255						4128
+	Solaris 7								255						8760
+	AIX 4.3									64						16384
+
+	# Podemos visualizar el tiempo de vida (TTL) a través del propio comando PING o a través de NMAP y capturando la respueta del host.
+
+
+	## Descubrimiento del sistema operativo utilizando Nmap Script Engine (NSE) ##
+
+		># nmap -A -v X.X.X.X
+
+		># nmap -O -v X.X.X.X
+
+		># nmap --script smb-os-discovery.nse X.X.X.X
+
+		- script: Especifica el script personalizado
+		- smb-os-discovery.nse: Intenta determinar el sistema operativo, el nombre de la computadora, el dominio, el grupo de trabajo y la hora actual a través del protocolo SMB (puertos 445 o 139).
+
+	## Descubrimiento del sistema operativo con Unicornscan ##
+
+		># unicornscan X.X.X.X -lv
+
+		- I: Especifica un modo interactivo.
+		- v: Especifica un modo detallado.
+
+
+## Escanee más allá de IDS y firewall ##
+
+	Técnicas para evadir IDS / firewall:
+		- Fragmentación de paquetes : envíe paquetes de sondeo fragmentados al objetivo previsto, que lo vuelve a ensamblar después de recibir todos los fragmentos
+		- Enrutamiento de origen : especifica la ruta de enrutamiento para que el paquete con formato incorrecto llegue al objetivo previsto
+		- Puerto de origen Manipulación : Manipular el puerto de origen real con el puerto de origen común para evadir IDS / cortafuegos
+		- Señuelo de dirección IP : Genere o especifique manualmente las direcciones IP de los señuelos para que el IDS / firewall no pueda determinar la dirección IP real
+		- Suplantación de direcciones IP : cambie las direcciones IP de origen para que parezca que el ataque proviene de otra persona.
+		- Creación de paquetes personalizados : envíe paquetes personalizados para escanear el objetivo previsto más allá de los firewalls
+		- Orden de host aleatorio : escanee la cantidad de hosts en la red de destino en un orden aleatorio para escanear el destino deseado que se encuentra más allá del firewall
+		- Envío de sumas de comprobación erróneas : envíe los paquetes con sumas de comprobación TCP / UPD erróneas o falsas al objetivo previsto
+		- Servidores proxy : use una cadena de servidores proxy para ocultar la fuente real de un escaneo y evadir ciertas restricciones de IDS / firewall
+		- Anonimizadores : utilice anonimizadores que les permitan eludir los censores de Internet y evadir ciertos IDS y reglas de firewall.
+
+	## Evadiendo IDS/Firewall con NMAP ##
+
+		# Fragmentación de paquetes #
+
+			># nmap -f X.X.X.X
+
+			- f: Se utiliza para dividir el paquete IP en pequeños fragmentos de paquete.
+
+			NOTAS: La fragmentación de paquetes se refiere a la división de un paquete de prueba en varios paquetes más pequeños (fragmentos) mientras se envía a una red. Cuando estos paquetes llegan a un host, los IDS y los firewalls detrás del host generalmente los ponen en cola y los procesan uno por uno. Sin embargo, dado que este método de procesamiento implica un mayor consumo de CPU y recursos de red, la configuración de la mayoría de los IDS hace que se omitan los paquetes fragmentados durante los escaneos de puertos.
+
+		# Manipulación Puerto Origen #
+
+			># nmap -g 80 X.X.X.X
+
+			- g: Se utiliza para realizar la manipulación del puerto de origen.
+
+			NOTAS: La manipulación del puerto de origen se refiere a manipular números de puerto reales con números de puerto comunes para evadir IDS / firewall: esto es útil cuando el firewall está configurado para permitir paquetes de puertos conocidos como HTTP, DNS, FTP, etc.
+
+		# Unidad de transmisión máxima (MTU) #
+
+			># nmap -mtu 8 X.X.X.X
+
+			- mtu: Especifica el número de unidades de transmisión máxima en bytes de paquetes.
+
+			NOTAS: Con MTU, se transmiten paquetes más pequeños en lugar de enviar un paquete completo a la vez. Esta técnica evade el mecanismo de filtrado y detección habilitado en la máquina objetivo.
+
+		# Spoofing direcciones Origen #
+
+			># nmap -D RND: 10 X.X.X.X
+
+			- D: Realiza un escaneo de señuelos.
+			- RND: Genera direcciones IP aleatorias y no reservadas.
+
+			NOTAS: La técnica del señuelo de dirección IP se refiere a generar o especificar manualmente direcciones IP de los señuelos para evadir IDS / firewall. Esta técnica hace que sea difícil para el IDS / firewall determinar qué dirección IP estaba realmente escaneando la red y qué direcciones IP eran señuelos. Al usar este comando, Nmap genera automáticamente un número aleatorio de señuelos para el escaneo y coloca aleatoriamente la dirección IP real entre las direcciones IP del señuelo.
+
+	
+	## Paquetes personalizados con Colasoft Packet Builde ##
+	## Paquetes UDP y TCP personalizados utilizando Hping3 ##
+
+		# Creación de paquetes UDP con X tamaño #
+			
+			># hping3 10.10.10.10 --udp --rand-source --data 500
+
+			- udp: Especifica el envio de paquetes UDP al host de destino.
+			- rand-source: Habilita el modo origen aleatorio.
+			- data: Especifica el tamaño del cuerpo de paquete.
+
+		# Envío de paquetes TCP SYN a puerto #
+
+			># hping3 -S X.X.X.X -p 80 -c 5
+
+			- S: Especifica la longitud TCP SYN en la máquina destino.
+			- p: Especifica la asignación del puerto para enviar el tráfico.
+			- c: Recuento de paquetes enviados a la máquina de destino.
+
+		# Inundación TCP sin FLAGS#
+
+			># hping3 X.X.X.X --flood
+
+			- flood: Realiza inundación de TCP.
+
+		# Inundación SYN TCP (DoS) #
+
+			># hping3 -S X.X.X.X -p 80 --flood --rand-source
+
+			- S: Establece la flag SYN
+			- p: Establece puerto de destino para enviar paquetes.
+			- flood: Realiza inundación con parámetros establecidos, en este caso SYN Flood.
+			- rand-source: Habilita el modo de origen aleatorio.
+
+	## Paquetes personalizados usando Nmap ##
+
+		# Enviar datos binarios 0 y 1 #
+
+			># nmap X.X.X.X --data 0xdeadbeef
+
+			- data [cadena hexadecimal]: Envia datos binarios como cargas útiles en los paquetes enviados para escanear más allá de los firewalls.
+
+		# Enviar string en paquetes TCP #
+
+			># nmap X.X.X.X --data-string "Ph34r my l33t skills"
+
+			- data-string: Establece data en los paquetes TCP.
+
+		# Enviar tamaño de bytes aleatorio #
+
+			># nmap X.X.X.X --data-length 5
+
+			- data-length: Agrega un número de bytes de datos aleatorios a la mayoría de los paquetes enviados sin ninguna carga útil específica del protocolo.
+
+		# Escaneo hosts destino aleatorio #
+
+			># nmap --randomize-hosts X.X.X.X
+
+			- randomize-hosts: Escanea la cantidad de hosts en la red de destino en orden aleatorio.
+
+		# Enviar BADSUM Erróneas o falsas para evitar firewalls #
+
+			># nmap --badsum X.X.X.X
+
+			- badsum: Envia paquetes con sumas de comprobación TCP/UDP erróneas o falsas al objetivo previsto para evitar ciertos conjuntos de reglas de firewall.
+
+
+## Escaneo en red usando varias herramientas (MetaSploit) ##
+
+	# Iniciar servicio PostGreSQL #
+
+		># service postgresql start
+
+	# Reiniciar servicio PostgreSQL
+
+		># service postgresql restart
+
+	# Conectar database #
+
+		># msfdb init
+
+	# Iniciar consola metasploit #
+
+		># msfconsole
+
+	# Comprobar estado database #
+
+		># db_status
+
+	# Escanear toda la red #
+
+		>#  nmap -Pn -sS -A -oX Test X.X.X.0/24
+
+	# Importar resultados de Nmap a database #
+
+		># dp_import Test
+
+	# Mostrar hosts descubiertos #
+
+		># hosts
+
+	# Mostrar servicios en hosts #
+
+		># services Ó db_services
+
+	# Mostrar módulos de escaneo de puertos de MetaSploit #
+
+		># search portscan
+
+	# Utilizar PortScan SYN #
+
+		># use auxiliary/scanner/portscan/syn
+
+	# Volver atrás # 
+
+		># back
+
+	# Rellenar opciones automáticamente con hosts importados #
+
+		>#  hosts -R
+
+	# Determinar SO de los Hosts #
+
+		># use auxiliary/scanner/smb/smb_version (Para SMB)
+	
+	# Determinar versión de servicio FTP #
+		
+		># use auxiliary/scanner/ftp/ftp_version (Para FTP)
+
+	# Exportar en formato CSV #
+
+		hosts -o /PATH/file.csv
+
+	
